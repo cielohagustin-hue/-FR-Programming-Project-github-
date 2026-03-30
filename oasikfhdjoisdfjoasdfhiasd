@@ -1,0 +1,166 @@
+print("""
+Welcome to Cyber Duel
+print("Some random fancy message
+
+Hacker Moves Table
+Choice   Move           Cost        Effect
+1        DDos Attack    15 Energy  Inflicts 20 Damage to the SysAdmin
+2        Phising Scam   10 HP      Restores 20 Energy (Capped at 100)
+3        Stealth Mode   10 Energy  Blocks SysAdmin's Firewall Purge
+
+SysAdmin Moves Table
+Choice   Move            Cost        Effect")
+1        Firewall Purge  15 Energy  Inflicts 20 Damage (Blocked by Stealth)
+2        Reboot System   10 HP      Restores 20 Energy (Capped at 100)"
+3        Trace Route     10 Energy  Inflicts 10 Damage; Bypasses Stealth""")
+
+Hacker = input("Hacker, who are you? ")
+if Hacker == "":
+    Hacker = "Neo"
+
+SysAdmin = input("SysAdmin, who are you? ")
+if SysAdmin == "":
+    SysAdmin = "Agent Smith"
+
+def display_stats(Hname, Hhealth, Henergy, Sname, Shealth, Senergy):
+    print("\n==================== Round Stats ====================")
+    print(Hname + "          | " + Sname)
+    print("Health: " + str(Hhealth) + "    | Health: " + str(Shealth))
+    print("Energy: " + str(Henergy) + "    | Energy: " + str(Senergy))
+    print("====================================================\n")
+
+def get_move(player):
+    while True:
+        move = input(player + ", enter your 3-digit move combo (1,2,3 only): ")
+        m1 = move[0]
+        m2 = move[1]
+        m3 = move[2]
+        if (m1 == "1" or m1 == "2" or m1 == "3") and \
+           (m2 == "1" or m2 == "2" or m2 == "3") and \
+           (m3 == "1" or m3 == "2" or m3 == "3"):
+            return m1, m2, m3
+        print("Invalid input! Must be 3 digits using only 1,2,3.\n")
+
+def game():
+    Hhealth = 100
+    Henergy = 30
+    Shealth = 100
+    Senergy = 30
+    round_count = 1
+    stealth_active = False
+
+    while Hhealth > 0 and Shealth > 0:
+        print("=============== Round " + str(round_count) + " ===============")
+
+        if (round_count % 3) == 0:
+            print("Warning: OVERHEAT -10 Health to both players!")
+            Hhealth -= 10
+            Shealth -= 10
+
+        display_stats(Hacker, Hhealth, Henergy, SysAdmin, Shealth, Senergy)
+
+        h1, h2, h3 = get_move(Hacker)
+        s1, s2, s3 = get_move(SysAdmin)
+
+        stealth_active = False
+        if h1 == "1" or h2 == "1" or h3 == "1": #if "1" in get_move(Hacker): #
+            one = get_move(Hacker).count("1")
+            if Henergy >= (one * 15):
+                print(Hacker + " used DDos Attack!")
+                Henergy -= (one * 15)
+                Shealth -= (one * 20)
+            elif Henergy >= ((one-1) * 15):
+                print(Hacker + " used DDos Attack!")
+                Henergy -= ((one-1) * 15)
+                Shealth -= ((one-1)* 20)
+            elif Henergy >= ((one-2) * 15):
+                print(Hacker + " used DDos Attack!")
+                Henergy -= ((one-2) * 15)
+                Shealth -= ((one-2)* 20)
+            else:
+                print(Hacker + " tried DDos Attack but not enough energy!")
+
+        if h1 == "2" or h2 == "2" or h3 == "2": #if "2" in get_move(Hacker): #
+            two = get_move(Hacker).count("2")
+            print(Hacker + " used Phising Scam!")
+            Hhealth -= (two * 10)
+            Henergy += (two * 20)
+            if Henergy >= 100:
+                Henergy = 100
+                print(Hacker + ", energy only capped at 100")
+
+        if h1 == "3" or h2 == "3" or h3 == "3": #if "3" in get_move(Hacker): #
+            three = get_move(Hacker).count("3")
+            if Henergy >= 10:
+                print(Hacker + " used Stealth Mode!")
+                Henergy -= 10
+                stealth_active = True
+            else:
+                print(Hacker + " tried Stealth Mode but not enough energy!")
+
+        if s1 == "3" or s2 == "3" or s3 == "3": #if "3" in get_move(SysAdmin): #
+            tatlo = get_move(SysAdmin).count("3")
+            if Senergy >= (tatlo * 10):
+                print(SysAdmin + " used Trace Route!")
+                Senergy -= tatlo * 10
+                Hhealth -= tatlo * 10
+            elif Senergy >= ((tatlo - 1) * 10):
+                print(SysAdmin + " used Trace Route!")
+                Senergy -= (tatlo - 1) * 10
+                Hhealth -= (tatlo - 1 )* 10
+            elif Senergy >= ((tatlo - 2) * 10):
+                print(SysAdmin + " used Trace Route!")
+                Senergy -= (tatlo - 2) * 10
+                Hhealth -= (tatlo - 2)* 10
+            else:
+                print(SysAdmin + " tried Trace Route but not enough energy!")
+
+        if s1 == "1" or s2 == "1" or s3 == "1":  #if "1" in get_move(SysAdmin): #
+            isa = get_move(SysAdmin).count("1")
+            if stealth_active:
+                print(SysAdmin + "'s Firewall Purge blocked by " + Hacker + "'s Stealth Mode!")
+            elif Senergy >= (isa * 15):
+                print(SysAdmin + " used Firewall Purge!")
+                Senergy -= (isa * 15)
+                Hhealth -= (isa * 20)
+            elif Senergy >= ((isa - 1)* 15):
+                print(SysAdmin + " used Firewall Purge!")
+                Senergy -= ((isa-1) * 15)
+                Hhealth -= ((isa-1) * 20)
+            elif Senergy >= ((isa -2)* 15):
+                print(SysAdmin + " used Firewall Purge!")
+                Senergy -= ((isa - 2)* 15)
+                Hhealth -= ((isa- 2) * 20)
+            else:
+                print(SysAdmin + " tried Firewall Purge but not enough energy!")
+
+        if s1 == "2" or s2 == "2" or s3 == "2": #if "2" in get_move(SysAdmin): #
+            dalawa = get_move(SysAdmin).count("2")
+            print(SysAdmin + " used Reboot System!")
+            Shealth -= (dalawa * 10)
+            Senergy += (dalawa * 20)
+            if Senergy > 100:
+                Senergy = 100
+                print(SysAdmin + ", energy only capped at 100")
+
+        display_stats(Hacker, Hhealth, Henergy, SysAdmin, Shealth, Senergy)
+
+        if Hhealth <= 0 and Shealth <= 0:
+            print("Double K.O! It's a tie!")
+            break
+        elif Hhealth <= 0:
+            print(SysAdmin + " wins!")
+            break
+        elif Shealth <= 0:
+            print(Hacker + " wins!")
+            break
+
+        round_count += 1
+
+    choice = input("Do you wish to continue? (1-Rematch / 2-Finish) ")
+    if choice == "1":
+        game()
+    else:
+        print("Game Over")
+
+game()
