@@ -1,0 +1,166 @@
+print("""
+Welcome to Cyber Duel
+
+print("Some random fancy message
+
+Hacker Moves Table
+Choice   Move           Cost        Effect
+1        DDos Attack    15 Energy  Inflicts 20 Damage to the SysAdmin
+2        Phising Scam   10 HP      Restores 20 Energy (Capped at 100)
+3        Stealth Mode   10 Energy  Blocks SysAdmin's Firewall Purge
+
+SysAdmin Moves Table
+Choice   Move            Cost        Effect")
+1        Firewall Purge  15 Energy  Inflicts 20 Damage (Blocked by Stealth)
+2        Reboot System   10 HP      Restores 20 Energy (Capped at 100)"
+3        Trace Route     10 Energy  Inflicts 10 Damage; Bypasses Stealth""")
+
+Hacker = input("Hacker, who are you? ")
+if Hacker == "":
+    Hacker = "Neo"
+
+SysAdmin = input("SysAdmin, who are you? ")
+if SysAdmin == "":
+    SysAdmin = "Agent Smith"
+
+def display_stats(Hacker, HHealth, Henergy, SysAdmin, SHealth, Senergy):
+    print("\n==================== Round Stats ====================")
+    print(Hacker + "          | " + SysAdmin)
+    print("Health: " + str(HHealth) + "    | Health: " + str(SHealth))
+    print("Energy: " + str(Henergy) + "    | Energy: " + str(Senergy))
+    print("====================================================\n")
+
+def get_move(player):
+    while True:
+        move = input(player + ", enter your 3-digit move combo (1,2,3 only): ")
+        m1 = move[0]
+        m2 = move[1]
+        m3 = move[2]
+        if (m1 == "1" or m1 == "2" or m1 == "3") and \
+           (m2 == "1" or m2 == "2" or m2 == "3") and \
+           (m3 == "1" or m3 == "2" or m3 == "3"):
+            return m1, m2, m3
+        print("Invalid input! Must be 3 digits using only 1,2,3.\n")
+
+def game():
+    Henergy = 30
+    HHealth = 100
+    Senergy = 30
+    SHealth = 100
+    roundCount = 1
+    print("Let the games begin")
+    display_stats(Hacker, HHealth, Henergy, SysAdmin, SHealth, Senergy)
+    while HHealth > 0 and SHealth > 0:
+        OverHeat = roundCount % 3
+        if OverHeat == 0:
+            print("""               Warning: OVERHEAT
+                               -10 Health to players""")
+            SHealth -= 10
+            HHealth -= 10
+            display_stats(Hacker, HHealth, Henergy, SysAdmin, SHealth, Senergy)
+            roundCount += 1
+        elif OverHeat != 0:
+            h1, h2, h3 = get_move(Hacker)
+            Hove = h1,h2,h3
+            x = Hove.count("1")
+            y = Hove.count("2")
+            z = Hove.count("3")
+            if "1" in Hove:
+                if Henergy >= (x * 15):
+                    print(f"{Hacker} used DDos Attack")
+                    Henergy = Henergy - (x * 15)
+                    SHealth = SHealth - (x * 20)
+                elif Henergy >= ((x - 1) * 15):
+                    print(f"{Hacker} used DDos Attack")
+                    Henergy = Henergy - ((x - 1) * 15)
+                    SHealth = SHealth - ((x - 1) * 20)
+                elif Henergy >= ((x - 2) * 15):
+                    print(f"{Hacker} used DDos Attack")
+                    Henergy = Henergy - ((x - 2) * 15)
+                    SHealth = SHealth - ((x - 2) * 20)
+                elif Henergy < 15:
+                    print(f"{Hacker}, you can't use that. You could only perform Phising Scam (2)")
+
+            if "2" in Hove:
+                if Henergy < 100:
+                    print(f"{Hacker} used Phising Scam")
+                    Henergy = Henergy + (y * 20)
+                    HHealth = HHealth - (y * 10)
+                else:
+                    print(f"{Hacker} can't use that! Energy only up to 100")
+                    roundCount += 1
+            if "3" in Hove:
+                if Henergy < 10:
+                    print(f"{Hacker} can't use stealth mode")
+                elif Henergy >= (z * 10):
+                    print(f"{Hacker} used Stealth Mode")
+                    Henergy = Henergy - (z * 10)
+                elif Henergy >= ((z - 1) * 10):
+                    print(f"{Hacker} used Stealth Mode")
+                    Henergy = Henergy - ((z - 1) * 10)
+                elif Henergy >= ((z - 2) * 10):
+                    print(f"{Hacker} used Stealth Mode")
+                    Henergy = Henergy - ((z - 2) * 10)
+
+            s1, s2, s3 = get_move(SysAdmin)
+            Sove = s1, s2, s3
+            a = Sove.count("1")
+            b = Sove.count("2")
+            c = Sove.count("3")
+            # print(x, y, z)
+
+            if "3" in Sove:
+                if Senergy <= 10:
+                    print(f"{SysAdmin} don't have enough energy")
+                elif Senergy > (c * 10):
+                    print(f"{SysAdmin} used Trace Route")
+                    Senergy = Senergy - (c * 10)
+                    HHealth = HHealth - (c * 10)
+                    z = 0
+                elif Senergy > ((c - 1) * 10):
+                    print(f"{SysAdmin} used Trace Route")
+                    Senergy = Senergy - ((c - 1) * 10)
+                    HHealth = HHealth - ((c - 1) * 10)
+                    z = 0
+                elif Senergy > ((c - 2) * 10):
+                    print(f"{SysAdmin} used Trace Route")
+                    Senergy = Senergy - ((c - 2) * 10)
+                    HHealth = HHealth - ((c - 2) * 10)
+                    z = 0
+            if "1" in Sove:
+                if Senergy < 15:
+                    print(f"{SysAdmin} doesn't have enough energy")
+                else:
+                    if z == 0:
+                        if Senergy >= (a * 15):
+                            print(f"{SysAdmin} used Firewall Purge")
+                            Senergy = Senergy - (a * 15)
+                            HHealth = HHealth - (a * 20)
+                        elif Senergy >= ((a - 1) * 15):
+                            print(f"{SysAdmin} used Firewall Purge")
+                            Senergy = Senergy - ((a - 1) * 15)
+                            HHealth = HHealth - ((a - 1) * 20)
+                        elif Senergy >= ((a - 2) * 15):
+                            print(f"{SysAdmin} used Firewall Purge")
+                            Senergy = Senergy - ((a - 2) * 15)
+                            HHealth = HHealth - ((a - 2) * 20)
+                    elif z > 0:
+                        print(f"Blocked by {Hacker}'s Stealth Mode")
+            if "2" in Sove:
+                if Senergy < 100:
+                    print(f"{SysAdmin} used Reboot System")
+                    Senergy = Senergy + (b * 20)
+                    HHealth = HHealth - (b * 10)
+                else:
+                    print(f"{SysAdmin}, you can't use that! Energy only up to 100")
+
+            display_stats(Hacker, HHealth, Henergy, SysAdmin, SHealth, Senergy)
+            roundCount += 1
+
+    choice = input("Do you wish to continue? (1-Rematch / 2-Finish) ")
+    if choice == "1":
+        game()
+    else:
+        print("Game Over")
+
+game()
